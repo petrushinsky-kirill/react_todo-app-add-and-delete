@@ -1,12 +1,16 @@
 import { Todo } from '../types/Todo';
 
-export const ToDo = ({ todo, key }: { todo: Todo; key: number }) => {
+export const ToDo = ({
+  todo,
+  onDelete,
+  isLoading,
+}: {
+  todo: Todo;
+  onDelete: (id: number) => void;
+  isLoading: boolean;
+}) => {
   return (
-    <div
-      data-cy="Todo"
-      key={key}
-      className={`todo ${todo.completed ? 'completed' : ''}`}
-    >
+    <div data-cy="Todo" className={`todo ${todo.completed ? 'completed' : ''}`}>
       <label className="todo__status-label" htmlFor={`todo-status-${todo.id}`}>
         <input
           id={`todo-status-${todo.id}`}
@@ -28,13 +32,16 @@ export const ToDo = ({ todo, key }: { todo: Todo; key: number }) => {
         type="button"
         className="todo__remove"
         data-cy="TodoDelete"
-        onClick={() => {}}
+        onClick={() => onDelete(todo.id)}
       >
         ×
       </button>
 
       {/* overlay will cover the todo while it is being deleted or updated */}
-      <div data-cy="TodoLoader" className="modal overlay">
+      <div
+        data-cy="TodoLoader"
+        className={`modal overlay ${isLoading ? 'is-active' : ''}`}
+      >
         <div className="modal-background has-background-white-ter" />
         <div className="loader" />
       </div>

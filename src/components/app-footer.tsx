@@ -5,10 +5,14 @@ export const AppFooter = ({
   todos,
   filter,
   setFilter,
+  onClearCompleted,
+  isCompletedTodos,
 }: {
   todos: Todo[];
   filter: keyof typeof FilterKeys;
   setFilter: (val: keyof typeof FilterKeys) => void;
+  onClearCompleted: () => void;
+  isCompletedTodos?: boolean;
 }) => {
   const completedTodos = todos?.filter(todo => !todo.completed).length;
   const filterKeys = Object.keys(FilterKeys) as Array<keyof typeof FilterKeys>;
@@ -41,6 +45,8 @@ export const AppFooter = ({
         type="button"
         className="todoapp__clear-completed"
         data-cy="ClearCompletedButton"
+        disabled={!isCompletedTodos}
+        onClick={onClearCompleted}
       >
         Clear completed
       </button>
