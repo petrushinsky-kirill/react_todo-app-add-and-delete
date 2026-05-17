@@ -10,13 +10,16 @@ export const getTodos = () => {
 export const addTodo = ({
   title,
   completed,
+  userId,
 }: {
   title: string;
   completed: boolean;
+  userId: number;
 }) => {
   return client.post<Todo>('/todos', {
     title,
     completed,
+    userId,
   });
 };
 

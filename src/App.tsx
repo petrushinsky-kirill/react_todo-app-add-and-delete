@@ -8,22 +8,23 @@ import { Error } from './components/error';
 import { AppFooter } from './components/app-footer';
 import { ToDo } from './components/todo';
 import { Errors } from './types/errors';
+import { FilterKeys } from './types/filters';
 
 export const App: React.FC = () => {
   const [todos, setTodos] = useState<Todo[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all');
+  const [filter, setFilter] = useState<FilterKeys>(FilterKeys.all);
   const [tempTodo, setTempTodo] = useState<Todo | null>(null);
   const [loadingIds, setLoadingIds] = useState<number[]>([]);
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   const filteredTodos = todos?.filter(todo => {
-    if (filter === 'active') {
+    if (filter === FilterKeys.active) {
       return !todo.completed;
     }
 
-    if (filter === 'completed') {
+    if (filter === FilterKeys.completed) {
       return todo.completed;
     }
 
@@ -32,25 +33,28 @@ export const App: React.FC = () => {
 
   const isCompletedTodos = todos?.some(todo => todo.completed);
 
-  const removeTodo = (id: number) => {
+  const removeTodo = async (id: number) => {
     setLoadingIds(prev => [...prev, id]);
     setError(null);
 
-    deleteTodo(id)
-      .then(() => {
-        setTodos(prev => (prev ? prev.filter(t => t.id !== id) : null));
-      })
-      .catch(() => {
-        setError(Errors.errorDelete);
-      })
-      .finally(() => {
-        setLoadingIds(prev => prev.filter(itemId => itemId !== id));
-        setTimeout(() => inputRef.current?.focus(), 0);
-      });
+    try {
+      await deleteTodo(id);
+
+      setTodos(prev => (prev ? prev.filter(t => t.id !== id) : null));
+    } catch {
+      setError(Errors.errorDelete);
+    } finally {
+      setLoadingIds(prev => prev.filter(itemId => itemId !== id));
+      setTimeout(() => inputRef.current?.focus(), 0);
+    }
   };
 
-  const onClearCompleted = () => {
-    todos?.filter(todo => todo.completed).forEach(todo => removeTodo(todo.id));
+  const onClearCompleted = async () => {
+    const completedTodos = todos?.filter(todo => todo.completed) || [];
+
+    setError(null);
+
+    await Promise.all(completedTodos.map(todo => removeTodo(todo.id)));
   };
 
   useEffect(() => {

@@ -9,8 +9,8 @@ export const AppFooter = ({
   isCompletedTodos,
 }: {
   todos: Todo[];
-  filter: keyof typeof FilterKeys;
-  setFilter: (val: keyof typeof FilterKeys) => void;
+  filter: FilterKeys;
+  setFilter: (val: FilterKeys) => void;
   onClearCompleted: () => void;
   isCompletedTodos?: boolean;
 }) => {
@@ -31,9 +31,9 @@ export const AppFooter = ({
           <a
             key={value}
             href="#/"
-            className={`filter__link ${filter === value ? 'selected' : ''}`}
+            className={`filter__link ${filter === FilterKeys[value] ? 'selected' : ''}`}
             data-cy={`FilterLink${FilterKeys[value]}`}
-            onClick={() => setFilter(value)}
+            onClick={() => setFilter(FilterKeys[value])}
           >
             {FilterKeys[value]}
           </a>

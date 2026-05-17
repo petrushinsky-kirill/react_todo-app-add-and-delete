@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Todo } from '../types/Todo';
 import { Errors } from '../types/errors';
-import { addTodo } from '../api/todos';
+import { addTodo, USER_ID } from '../api/todos';
 
 type Props = {
   setError: (val: string | null) => void;
@@ -31,10 +31,10 @@ export const AppHeader: React.FC<Props> = ({
       id: 0,
       title,
       completed,
-      userId: 0, // Placeholder: ensure this matches your USER_ID logic
+      userId: USER_ID,
     });
 
-    addTodo({ title, completed })
+    addTodo({ title, completed, userId: USER_ID })
       .then((newTodo: Todo) => {
         setTodos(prev => (prev ? [...prev, newTodo] : [newTodo]));
         setError(null);
