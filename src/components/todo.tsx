@@ -3,10 +3,12 @@ import { Todo } from '../types/Todo';
 export const ToDo = ({
   todo,
   onDelete,
+  onUpdate,
   isLoading,
 }: {
   todo: Todo;
   onDelete: (id: number) => void;
+  onUpdate: (todo: Todo) => void;
   isLoading: boolean;
 }) => {
   return (
@@ -19,7 +21,8 @@ export const ToDo = ({
           className="todo__status"
           checked={todo.completed}
           aria-label="Toggle todo status"
-          onChange={() => {}}
+          disabled={isLoading}
+          onChange={e => onUpdate({ ...todo, completed: e.target.checked })}
         />
       </label>
 

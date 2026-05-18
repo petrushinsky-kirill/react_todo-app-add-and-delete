@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 import React, { useEffect, useState } from 'react';
 import { Todo } from './types/Todo';
-import { getTodos, deleteTodo } from './api/todos';
+import { getTodos, deleteTodo, updateTodo } from './api/todos';
 import { AppHeader } from './components/app-header';
 import { Error } from './components/error';
 import { AppFooter } from './components/app-footer';
@@ -49,6 +49,26 @@ export const App: React.FC = () => {
     }
   };
 
+  const onUpdateTodo = async (todoToUpdate: Todo) => {
+    setLoadingIds(prev => [...prev, todoToUpdate.id]);
+    setError(null);
+
+    try {
+      const updatedTodo = await updateTodo(todoToUpdate);
+
+      setTodos(prev =>
+        prev
+          ? prev.map(toDo => (toDo.id === todoToUpdate.id ? updatedTodo : toDo))
+          : null,
+      );
+    } catch {
+      setError(Errors.errorUpdate);
+    } finally {
+      setLoadingIds(prev => prev.filter(itemId => itemId !== todoToUpdate.id));
+      setTimeout(() => inputRef.current?.focus(), 0);
+    }
+  };
+
   const onClearCompleted = async () => {
     const completedTodos = todos?.filter(todo => todo.completed) || [];
 
@@ -84,6 +104,7 @@ export const App: React.FC = () => {
                 todo={todo}
                 key={todo.id}
                 onDelete={removeTodo}
+                onUpdate={onUpdateTodo}
                 isLoading={loadingIds.includes(todo.id)}
               />
             ))}

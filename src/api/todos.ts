@@ -26,3 +26,15 @@ export const addTodo = ({
 export const deleteTodo = (id: number) => {
   return client.delete(`/todos/${id}`);
 };
+
+export const updateTodo = ({
+  id,
+  completed,
+}: {
+  id: number;
+  completed: boolean;
+}) => {
+  return client.patch<Todo>(`/todos/${id}`, {
+    completed,
+  });
+};
